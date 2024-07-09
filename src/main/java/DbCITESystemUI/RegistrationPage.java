@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument;
 
 public class RegistrationPage extends JFrame {
     
@@ -54,9 +55,12 @@ public class RegistrationPage extends JFrame {
     private final JLabel lblAffiliation;
     private static final String[]Affiliation={"Institute of Bachelors in Information Technology Studies"};
     private JComboBox<String> cmbAffiliation;
-    private JComboBox<Integer> cmbDay;
-    private JComboBox<Integer> cmbYear;
-    private JComboBox<Integer> cmbMonth;
+    private JComboBox<String> cmbDay;
+    private JComboBox<String> cmbYear;
+    private JComboBox<String> cmbMonth;
+    private static final String[] month = {"01", "02", "03","04","05","06","07","08","09","10","11","12"};
+    private static final String[] day = {"1", "2", "3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"};
+    private static final String[] year = {"1999","2000","2001","2002","2003","2004","2005","2006","2007","2008"};
     private final JButton btnRegister;
     private JLabel selectedCourse = new JLabel();
     private JLabel selectedYear = new JLabel();
@@ -64,7 +68,8 @@ public class RegistrationPage extends JFrame {
     private JLabel selectedDate = new JLabel();
     
     public RegistrationPage (){
-    
+        
+     
     mainPanel = new JPanel();
     upperPanel = new JPanel();
     panelBody = new JPanel();
@@ -91,6 +96,15 @@ public class RegistrationPage extends JFrame {
     txtPosition = new JTextField();
     lblAffiliation = new JLabel("Affiliation");
     btnRegister = new JButton("Register");
+    
+    //LETTER ONLY FILTER
+        ((AbstractDocument) txtStudLastName.getDocument()).setDocumentFilter(new FilterLetter());
+        ((AbstractDocument) txtStudFirstName.getDocument()).setDocumentFilter(new FilterLetter());
+        ((AbstractDocument) txtStudMiddleName.getDocument()).setDocumentFilter(new FilterLetter());
+        ((AbstractDocument) txtPosition.getDocument()).setDocumentFilter(new FilterLetter());
+
+        //NUMBERS ONLY FILTER
+         ((AbstractDocument) txtContactNumber.getDocument()).setDocumentFilter(new FilterNumber());
     
     
        setSize(1050,700);
@@ -248,27 +262,17 @@ public class RegistrationPage extends JFrame {
         lblBirthDay.setBounds(560, 300, 230, 30);
         panelBody.add(lblBirthDay);
         
-        Integer[] years = new Integer[125];
-        int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
-        for (int i = 0; i < 125; i++) {
-            years[i] = currentYear - i;
-        }
-        cmbYear = new JComboBox<>(years);
+
+        cmbYear = new JComboBox<>(year);
         cmbYear.setBounds(560, 330, 100, 30);
         panelBody.add(cmbYear);
        
-        Integer[] months = new Integer[12];
-        for (int i = 1; i <= 12; i++) {
-            months[i - 1] = i;
-        }
-        cmbMonth = new JComboBox<>(months);
+
+        cmbMonth = new JComboBox<>(month);
         cmbMonth.setBounds(680, 330, 100, 30);
         panelBody.add(cmbMonth);
         
-         Integer[] day = new Integer[31];
-        for (int i = 1; i <= 31; i++) {
-            day[i - 1] = i;
-        }
+
         cmbDay = new JComboBox<>(day);
         cmbDay.setBounds(800, 330, 100, 30);
         panelBody.add(cmbDay);
@@ -284,17 +288,17 @@ public class RegistrationPage extends JFrame {
             String inputCourse = (String) cmbCourse.getSelectedItem();
             selectedCourse.setText( inputCourse);
             
-            String inputYear = (String) cmbYear.getSelectedItem();
+            String inputYear = (String) cmbYearLevel.getSelectedItem();
             selectedYear.setText( inputYear);
             
             String inputAffil = (String) cmbAffiliation.getSelectedItem();
             selectedAffil.setText( inputAffil);
-            
-        int day = Integer.parseInt((String) cmbDay.getSelectedItem());
-        int month = Integer.parseInt((String) cmbMonth.getSelectedItem());
-        int year = Integer.parseInt((String) cmbYear.getSelectedItem());
+       
+        String day = (String) cmbDay.getSelectedItem();
+        String month = (String) cmbMonth.getSelectedItem();
+        String year = (String) cmbYear.getSelectedItem();
         
-        LocalDate birthDate = LocalDate.of(year, month, day);
+        String birthDate = "" +year+ "-" +month+ "-" + "" +day+ "";
             
             StudentModels studInfo = new StudentModels();
             studInfo.StudID = txtStudID.getText();
@@ -305,13 +309,15 @@ public class RegistrationPage extends JFrame {
             studInfo.Year = selectedYear.getText();
             studInfo.Address = txtAddress.getText();
             studInfo.ContactNumber = txtContactNumber.getText();
-            studInfo.BirthDay = birthDate.toString();
+            studInfo.BirthDay = birthDate;
             studInfo.Position = txtPosition.getText();
             studInfo.Affiliation = selectedDate.getText();
             
             citeFeatures.AddStudent(studInfo);
             
-            JOptionPane.showMessageDialog(null, "Student Added!", "", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "You are now registered!", "", JOptionPane.INFORMATION_MESSAGE);
+            HomePage hp = new HomePage();
+            dispose();
         } 
     });
         
@@ -319,15 +325,7 @@ public class RegistrationPage extends JFrame {
         
     }
     
-//    public LocalDate getSelectedDate() {
-//        
-//        int day = Integer.parseInt((String) cmbDay.getSelectedItem());
-//        int month = Integer.parseInt((String) cmbMonth.getSelectedItem());
-//        int year = Integer.parseInt((String) cmbYear.getSelectedItem());
-//        
-//        return LocalDate.of(year, month, day);
-//        
-//        }
+
     
 
 }
